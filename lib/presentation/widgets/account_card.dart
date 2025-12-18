@@ -13,7 +13,6 @@ class AccountCard extends StatelessWidget {
     required this.account,
     required this.controller,
   });
-
   @override
   Widget build(BuildContext context) {
     final statusColor = StateHelper.getColorForState(account.state);
@@ -76,7 +75,7 @@ class AccountCard extends StatelessWidget {
                           Icon(Icons.fingerprint, size: 12, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
-                            'ID: ${account.publicId.substring(0, 8)}...',
+                            'ID: ${account.publicId}',
                             style: const TextStyle(
                               fontSize: 11,
                               color: Colors.grey,
@@ -318,6 +317,48 @@ class AccountCard extends StatelessWidget {
 
   void _showStateChangeDialog() {
     final currentState = account.state.name;
+    final List<Map<String, dynamic>> availableStates = [];
+
+    // إضافة الحالات المتاحة بناءً على الحالة الحالية
+    if (account.canTransitionTo('active')) {
+      availableStates.add({
+        'name': 'active',
+        'arabic': 'تفعيل',
+        'description': 'جعل الحساب نشطًا',
+        'icon': Icons.check_circle,
+        'color': Colors.green,
+      });
+    }
+
+    if (account.canTransitionTo('frozen')) {
+      availableStates.add({
+        'name': 'frozen',
+        'arabic': 'تجميد',
+        'description': 'الإيداعات فقط مسموحة',
+        'icon': Icons.ac_unit,
+        'color': Colors.blue,
+      });
+    }
+
+    if (account.canTransitionTo('suspended')) {
+      availableStates.add({
+        'name': 'suspended',
+        'arabic': 'إيقاف',
+        'description': 'جميع العمليات متوقفة',
+        'icon': Icons.pause_circle,
+        'color': Colors.orange,
+      });
+    }
+
+    if (account.canTransitionTo('closed')) {
+      availableStates.add({
+        'name': 'closed',
+        'arabic': 'إغلاق',
+        'description': 'إغلاق الحساب نهائيًا',
+        'icon': Icons.cancel,
+        'color': Colors.red,
+      });
+    }
 
     Get.bottomSheet(
       Container(
@@ -352,51 +393,33 @@ class AccountCard extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              const Text(
-                'اختر الحالة الجديدة:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-
-              // Active State
-              if (currentState != 'active' && account.canTransitionTo('active'))
-                _buildStateOption(
-                  'تفعيل',
-                  'جعل الحساب نشطًا',
-                  Icons.check_circle,
-                  Colors.green,
-                  'active',
+              if (availableStates.isEmpty)
+                const Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.block, size: 60, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text('لا توجد حالات متاحة للتغيير'),
+                    ],
+                  ),
+                )
+              else ...[
+                const Text(
+                  'اختر الحالة الجديدة:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 12),
 
-              // Frozen State
-              if (currentState != 'frozen' && account.canTransitionTo('frozen'))
-                _buildStateOption(
-                  'تجميد',
-                  'الإيداعات فقط مسموحة',
-                  Icons.ac_unit,
-                  Colors.blue,
-                  'frozen',
+                ...availableStates.map((state) =>
+                    _buildStateOption(
+                      state['arabic'],
+                      state['description'],
+                      state['icon'],
+                      state['color'],
+                      state['name'],
+                    ),
                 ),
-
-              // Suspended State
-              if (currentState != 'suspended' && account.canTransitionTo('suspended'))
-                _buildStateOption(
-                  'إيقاف',
-                  'جميع العمليات متوقفة',
-                  Icons.pause_circle,
-                  Colors.orange,
-                  'suspended',
-                ),
-
-              // Closed State
-              if (currentState != 'closed' && account.canTransitionTo('closed'))
-                _buildStateOption(
-                  'إغلاق',
-                  'إغلاق الحساب نهائيًا',
-                  Icons.cancel,
-                  Colors.red,
-                  'closed',
-                ),
+              ],
 
               const SizedBox(height: 20),
               SizedBox(

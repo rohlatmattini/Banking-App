@@ -31,6 +31,24 @@ abstract class AccountEntity {
     required this.updatedAt,
   });
 
+  // في AccountEntity.dart
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'public_id': publicId,
+      'user_id': userId,
+      'parent_id': parentId,
+      'type': type.value,
+      'state': state.name,
+      'balance': balance,
+      'daily_limit': dailyLimit,
+      'monthly_limit': monthlyLimit,
+      'closed_at': closedAt?.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
+
   // Check if account is a group
   bool get isGroup => type == AccountTypeEnum.GROUP;
 

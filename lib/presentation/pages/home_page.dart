@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
@@ -35,18 +35,30 @@ class HomePage extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () => Get.toNamed('/accounts'),
-                    icon: const Icon(Icons.account_balance_wallet,color: Colors.teal),
-                    label: const Text('إدارة الحسابات',style: TextStyle(color: Colors.teal ),),
+                    icon: const Icon(Icons.account_balance_wallet,color: Colors.white),
+                    label: const Text('إدارة الحسابات',style: TextStyle(color: Colors.white )),
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  ElevatedButton.icon(
+                    onPressed: () => Get.toNamed('/accounts/onboard'),
+                    icon: const Icon(Icons.person_add,color: Colors.white),
+                    label: const Text('إضافة عميل جديد',style:TextStyle(color: Colors.white )),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                   ),
                   const SizedBox(height: 15),
                   ElevatedButton.icon(
                     onPressed: () => Get.toNamed('/reports'),
-                    icon: const Icon(Icons.assessment,color: Colors.teal,),
-                    label: const Text('التقارير والتحليلات',style:TextStyle(color: Colors.teal )),
+                    icon: const Icon(Icons.assessment,color: Colors.white),
+                    label: const Text('التقارير والتحليلات',style:TextStyle(color: Colors.white )),
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                   ),

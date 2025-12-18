@@ -13,23 +13,23 @@ class ReportsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('التقارير والتحليلات', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
+        title: const Text('Reports and Analytics', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: () => controller.loadAllReports(),
-            tooltip: 'تحديث',
+            tooltip: 'Refresh',
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (format) => _exportReport(format),
             itemBuilder: (context) => const [
-              PopupMenuItem(value: 'PDF', child: Text('تصدير PDF')),
-              PopupMenuItem(value: 'Excel', child: Text('تصدير Excel')),
-              PopupMenuItem(value: 'CSV', child: Text('تصدير CSV')),
-              PopupMenuItem(value: 'print', child: Text('طباعة')),
+              PopupMenuItem(value: 'PDF', child: Text('Export PDF')),
+              PopupMenuItem(value: 'Excel', child: Text('Export Excel')),
+              PopupMenuItem(value: 'CSV', child: Text('Export CSV')),
+              PopupMenuItem(value: 'print', child: Text('Print')),
             ],
           ),
         ],
@@ -42,7 +42,7 @@ class ReportsPage extends StatelessWidget {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 16),
-                Text('جاري تحميل التقارير...'),
+                Text('Loading reports...'),
               ],
             ),
           );
@@ -53,19 +53,19 @@ class ReportsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ملخص النظام
+              // System Summary
               _buildSystemSummaryCard(),
               const SizedBox(height: 20),
 
-              // التقرير اليومي
+              // Daily Report
               _buildDailyReportsCard(),
               const SizedBox(height: 20),
 
-              // ملخصات الحسابات
+              // Account Summaries
               _buildAccountSummariesCard(),
               const SizedBox(height: 20),
 
-              // سجلات التدقيق
+              // Audit Logs
               _buildAuditLogsCard(),
             ],
           ),
@@ -95,7 +95,7 @@ class ReportsPage extends StatelessWidget {
               children: [
                 const Icon(Icons.assessment, color: Colors.teal, size: 24),
                 const SizedBox(width: 8),
-                const Text('ملخص النظام', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('System Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const Spacer(),
                 Chip(
                   label: Text(
@@ -116,49 +116,49 @@ class ReportsPage extends StatelessWidget {
               crossAxisSpacing: 10,
               children: [
                 _buildSummaryItem(
-                  'إجمالي الحسابات',
+                  'Total Accounts',
                   '${controller.systemSummary['totalAccounts'] ?? 0}',
                   Icons.account_balance_wallet,
                   Colors.teal,
                 ),
                 _buildSummaryItem(
-                  'الحسابات النشطة',
+                  'Active Accounts',
                   '${controller.systemSummary['activeAccounts'] ?? 0}',
                   Icons.check_circle,
                   Colors.green,
                 ),
                 _buildSummaryItem(
-                  'إجمالي الرصيد',
+                  'Total Balance',
                   '\$${_formatMoney(controller.systemSummary['totalBalance'] ?? 0)}',
                   Icons.monetization_on,
                   Colors.amber,
                 ),
                 _buildSummaryItem(
-                  'المعاملات اليوم',
+                  'Today\'s Transactions',
                   '${controller.systemSummary['todayTransactions'] ?? 0}',
                   Icons.swap_horiz,
                   Colors.blue,
                 ),
                 _buildSummaryItem(
-                  'الإيداعات اليوم',
+                  'Today\'s Deposits',
                   '\$${_formatMoney(controller.systemSummary['todayDeposits'] ?? 0)}',
                   Icons.arrow_upward,
                   Colors.green,
                 ),
                 _buildSummaryItem(
-                  'السحوبات اليوم',
+                  'Today\'s Withdrawals',
                   '\$${_formatMoney(controller.systemSummary['todayWithdrawals'] ?? 0)}',
                   Icons.arrow_downward,
                   Colors.orange,
                 ),
                 _buildSummaryItem(
-                  'وقت التشغيل',
+                  'System Uptime',
                   '${controller.systemSummary['systemUptime'] ?? "0%"}',
                   Icons.timer,
                   Colors.purple,
                 ),
                 _buildSummaryItem(
-                  'آخر نسخة احتياطية',
+                  'Last Backup',
                   _formatDate(controller.systemSummary['lastBackup']),
                   Icons.backup,
                   Colors.red,
@@ -237,7 +237,7 @@ class ReportsPage extends StatelessWidget {
                   children: [
                     const Icon(Icons.today, color: Colors.teal),
                     const SizedBox(width: 8),
-                    const Text('التقرير اليومي', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text('Daily Report', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 TextButton.icon(
@@ -257,7 +257,7 @@ class ReportsPage extends StatelessWidget {
                   children: [
                     Icon(Icons.report_problem, size: 50, color: Colors.grey),
                     SizedBox(height: 8),
-                    Text('لا توجد بيانات لهذا التاريخ'),
+                    Text('No data available for this date'),
                   ],
                 ),
               ),
@@ -281,7 +281,7 @@ class ReportsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'تاريخ: ${_formatDate(report['date'])}',
+            'Date: ${_formatDate(report['date'])}',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
@@ -289,25 +289,25 @@ class ReportsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildMetricItem(
-                'المعاملات',
+                'Transactions',
                 '${report['totalTransactions']}',
                 Icons.swap_horiz,
                 Colors.teal,
               ),
               _buildMetricItem(
-                'الإيداعات',
+                'Deposits',
                 '\$${_formatMoney(report['totalDeposits'] ?? 0)}',
                 Icons.arrow_upward,
                 Colors.green,
               ),
               _buildMetricItem(
-                'السحوبات',
+                'Withdrawals',
                 '\$${_formatMoney(report['totalWithdrawals'] ?? 0)}',
                 Icons.arrow_downward,
                 Colors.orange,
               ),
               _buildMetricItem(
-                'حسابات جديدة',
+                'New Accounts',
                 '${report['newAccounts']}',
                 Icons.add,
                 Colors.blue,
@@ -363,7 +363,7 @@ class ReportsPage extends StatelessWidget {
               children: [
                 Icon(Icons.pie_chart, color: Colors.teal),
                 SizedBox(width: 8),
-                Text('ملخصات الحسابات', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('Account Summaries', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 16),
@@ -373,11 +373,11 @@ class ReportsPage extends StatelessWidget {
                 columnSpacing: 30,
                 horizontalMargin: 0,
                 columns: const [
-                  DataColumn(label: Text('النوع')),
-                  DataColumn(label: Text('العدد'), numeric: true),
-                  DataColumn(label: Text('إجمالي الرصيد'), numeric: true),
-                  DataColumn(label: Text('متوسط الرصيد'), numeric: true),
-                  DataColumn(label: Text('النسبة'), numeric: true),
+                  DataColumn(label: Text('Type')),
+                  DataColumn(label: Text('Count'), numeric: true),
+                  DataColumn(label: Text('Total Balance'), numeric: true),
+                  DataColumn(label: Text('Average Balance'), numeric: true),
+                  DataColumn(label: Text('Percentage'), numeric: true),
                 ],
                 rows: controller.accountSummaries.map((summary) {
                   final totalCount = controller.accountSummaries.fold<int>(0, (sum, s) => sum + (s['count'] as int));
@@ -428,13 +428,13 @@ class ReportsPage extends StatelessWidget {
               children: [
                 Icon(Icons.history, color: Colors.teal),
                 SizedBox(width: 8),
-                Text('سجلات التدقيق', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('Audit Logs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 16),
             if (controller.auditLogs.isEmpty)
               const Center(
-                child: Text('لا توجد سجلات تدقيق'),
+                child: Text('No audit logs available'),
               ),
             ...controller.auditLogs.map((log) => _buildAuditLogItem(log)),
           ],
@@ -513,8 +513,8 @@ class ReportsPage extends StatelessWidget {
 
   void _exportReport(String format) {
     Get.snackbar(
-      'نجاح',
-      'تم تصدير التقرير بتنسيق $format',
+      'Success',
+      'Report exported in $format format',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.teal,
       colorText: Colors.white,
@@ -552,31 +552,31 @@ class ReportsPage extends StatelessWidget {
 
   String _translateAccountType(String type) {
     switch (type) {
-      case 'savings': return 'توفير';
-      case 'checking': return 'جاري';
-      case 'loan': return 'قرض';
-      case 'investment': return 'استثمار';
-      case 'group': return 'مجموعة';
+      case 'savings': return 'Savings';
+      case 'checking': return 'Checking';
+      case 'loan': return 'Loan';
+      case 'investment': return 'Investment';
+      case 'group': return 'Group';
       default: return type;
     }
   }
 
   Color _getTypeColor(String type) {
     switch (type) {
-      case 'savings': return Colors.green;
-      case 'checking': return Colors.blue;
-      case 'loan': return Colors.orange;
-      case 'investment': return Colors.purple;
+      case 'savings': return Colors.grey;
+      case 'checking': return Colors.grey;
+      case 'loan': return Colors.grey;
+      case 'investment': return Colors.grey;
       default: return Colors.grey;
     }
   }
 
   Color _getActionColor(String action) {
     switch (action) {
-      case 'LOGIN': return Colors.green;
-      case 'ACCOUNT_CREATE': return Colors.blue;
-      case 'TRANSACTION_PROCESS': return Colors.amber;
-      case 'REPORT_GENERATE': return Colors.purple;
+      case 'LOGIN': return Colors.grey;
+      case 'ACCOUNT_CREATE': return Colors.grey;
+      case 'TRANSACTION_PROCESS': return Colors.grey;
+      case 'REPORT_GENERATE': return Colors.grey;
       default: return Colors.grey;
     }
   }

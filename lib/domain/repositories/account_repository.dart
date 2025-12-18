@@ -15,6 +15,14 @@ abstract class AccountRepository {
     String? monthlyLimit,
   });
 
+  // New method for creating user account directly
+  Future<AccountEntity> createUserAccount({
+    required int userId,
+    required AccountTypeEnum type,
+    String? dailyLimit,
+    String? monthlyLimit,
+  });
+
   // Query operations
   Future<List<AccountEntity>> listByUser(int userId);
   Future<AccountEntity?> findByPublicId(String publicId);

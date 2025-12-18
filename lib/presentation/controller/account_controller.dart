@@ -14,41 +14,19 @@ class AccountController extends GetxController {
   final accounts = <AccountEntity>[].obs;
   final isLoading = true.obs;
   final selectedAccount = Rxn<AccountEntity>();
+  final RxInt currentUserId = 4.obs;
 
   @override
   void onInit() {
     fetchAccounts();
     super.onInit();
   }
-
-  Future<void> fetchAccounts() async {
-    isLoading.value = true;
+  Future<void> createUserAccount(OpenAccountData data) async {
     try {
-      // TODO: Get actual user ID from authentication
-      final userId = 1; // Replace with actual user ID
-      final result = await repository.listByUser(userId);
-      accounts.assignAll(result);
-    } catch (e) {
-      _showError('فشل تحميل الحسابات', e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
+      isLoading.value = true;
 
-  Future<void> createAccount(OpenAccountData data) async {
-    try {
-      // TODO: Get actual user ID from authentication
-      final userId = 1; // Replace with actual user ID
-
-      // This would use OpenAccountUseCase in production
-      final group = await repository.findUserGroup(userId);
-      if (group == null) {
-        throw Exception('لا يوجد حساب مجموعة للمستخدم');
-      }
-
-      final newAccount = await repository.createChildAccount(
-        userId: userId,
-        groupId: group.id,
+      final newAccount = await repository.createUserAccount(
+        userId: currentUserId.value,
         type: data.type,
         dailyLimit: data.dailyLimit,
         monthlyLimit: data.monthlyLimit,
@@ -56,8 +34,31 @@ class AccountController extends GetxController {
 
       accounts.add(newAccount);
       _showSuccess('تم إنشاء الحساب بنجاح');
+
+      // تحديث القائمة بعد الإنشاء
+      await fetchAccounts();
     } catch (e) {
       _showError('فشل إنشاء الحساب', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // قم بتعديل دالة createAccount القديمة لاستخدام الطريقة الجديدة
+  Future<void> createAccount(OpenAccountData data) async {
+    // استخدم الطريقة الجديدة مباشرة
+    await createUserAccount(data);
+  }
+
+  Future<void> fetchAccounts() async {
+    isLoading.value = true;
+    try {
+      final result = await repository.listByUser(currentUserId.value);
+      accounts.assignAll(result);
+    } catch (e) {
+      _showError('فشل تحميل الحسابات', e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 

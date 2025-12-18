@@ -2,6 +2,7 @@ import 'package:bankingplatform/presentation/controller/account_controller.dart'
 import 'package:bankingplatform/presentation/controller/report_controller.dart';
 import 'package:bankingplatform/presentation/pages/account_management_page.dart';
 import 'package:bankingplatform/presentation/pages/home_page.dart';
+import 'package:bankingplatform/presentation/pages/onboard_customer_page.dart';
 import 'package:bankingplatform/presentation/pages/reports_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,6 @@ import 'package:get_storage/get_storage.dart';
 import 'data/datasource/api_account_data_source.dart';
 import 'data/repositories/account_repository_impl.dart';
 import 'data/repositories/report_repository_impl.dart';
-
 
 void main() async {
   await GetStorage.init();
@@ -46,6 +46,10 @@ class BankingApp extends StatelessWidget {
               repository: accountRepository,
             ));
           }),
+        ),
+        GetPage(
+          name: '/accounts/onboard',
+          page: () => OnboardCustomerPage(),
         ),
         GetPage(
           name: '/reports',

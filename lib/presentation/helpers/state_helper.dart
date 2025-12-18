@@ -34,8 +34,8 @@ class StateHelper {
     return hexToColor(account.type.colorHex);
   }
 
-  static IconData getIconForType(AccountEntity account) {
-    switch (account.type.value) {
+  static IconData getIconForType(AccountEntity type) {
+    switch (type.type.value) {
       case 'savings':
         return Icons.savings;
       case 'checking':
@@ -50,4 +50,7 @@ class StateHelper {
         return Icons.account_balance_wallet;
     }
   }
+
+
+
 }

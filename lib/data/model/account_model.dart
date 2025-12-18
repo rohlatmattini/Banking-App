@@ -32,13 +32,27 @@ class AccountModel extends AccountEntity {
   );
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
+    // API يرسل id كـ string أحياناً
+    final id = json['id'];
+    final intId = id is int ? id : (id is String ? int.tryParse(id) ?? 0 : 0);
+
+    // تحويل public_id - بعض APIs تستخدم id كـ public_id
+    String publicId;
+    if (json['public_id'] != null) {
+      publicId = json['public_id'].toString();
+    } else if (json['id'] != null) {
+      publicId = json['id'].toString();
+    } else {
+      publicId = '';
+    }
+
     return AccountModel(
-      id: json['id'] as int? ?? 0,
-      publicId: json['public_id'] as String? ?? '',
-      userId: json['user_id'] as int? ?? 0,
-      parentId: json['parent_id'] as int?,
-      type: AccountTypeEnum.fromValue(json['type'] as String? ?? 'savings'),
-      balance: (json['balance'] as num? ?? 0).toDouble(),
+      id: intId,
+      publicId: publicId,
+      userId: json['user_id'] is int ? json['user_id'] : (json['user_id'] is String ? int.tryParse(json['user_id']) ?? 0 : 0),
+      parentId: json['parent_id'] is int ? json['parent_id'] : (json['parent_id'] is String ? int.tryParse(json['parent_id']) : null),
+      type: AccountTypeEnum.fromValue(json['type'] as String? ?? 'checking'),
+      balance: (json['balance'] is String ? double.tryParse(json['balance']) : (json['balance'] as num?)?.toDouble()) ?? 0.0,
       state: json['state'] as String? ?? 'active',
       dailyLimit: json['daily_limit']?.toString(),
       monthlyLimit: json['monthly_limit']?.toString(),
