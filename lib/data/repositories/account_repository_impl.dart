@@ -1,5 +1,9 @@
 // lib/data/repositories/account_repository_impl.dart
+import '../../domain/dtos/approval_decision_dto.dart';
 import '../../domain/dtos/transaction_dto.dart';
+import '../../domain/dtos/transaction_query_dto.dart';
+import '../../domain/entities/transaction_detail_entity.dart';
+import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/account_repository.dart';
 import '../../domain/entities/account_entity.dart';
 import '../../domain/enums/account_type_enum.dart';
@@ -67,5 +71,29 @@ class AccountRepositoryImpl implements AccountRepository {
   Future<Map<String, dynamic>> transfer(TransferData data, String idempotencyKey) async {
     return await dataSource.transfer(data, idempotencyKey);
   }
+
+  @override
+  Future<List<TransactionEntity>> getTransactions({String? scope}) async {
+    return await dataSource.fetchTransactions(scope: scope);
+  }
+
+  @override
+  Future<TransactionDetailEntity> getTransactionDetail(String transactionId, {String? scope}) async {
+    return await dataSource.fetchTransactionDetail(transactionId, scope: scope);
+  }
+
+  @override
+  Future<List<TransactionEntity>> getPendingApprovals() async {
+    return await dataSource.fetchPendingApprovals();
+  }
+
+  @override
+  Future<Map<String, dynamic>> submitApprovalDecision(
+      String transactionId,
+      ApprovalDecisionData decision
+      ) async {
+    return await dataSource.submitApprovalDecision(transactionId, decision);
+  }
+
 
 }

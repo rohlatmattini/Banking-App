@@ -1,6 +1,12 @@
 // lib/data/datasource/api_account_data_source.dart
 import 'package:dio/dio.dart';
+import '../../domain/dtos/approval_decision_dto.dart';
 import '../../domain/dtos/transaction_dto.dart';
+import '../../domain/dtos/transaction_query_dto.dart';
+import '../../domain/entities/transaction_detail_entity.dart';
+import '../../domain/entities/transaction_entity.dart';
+import '../model/transaction_detail_model.dart';
+import '../model/transaction_model.dart';
 import 'account_data_source.dart';
 import '../model/account_model.dart';
 import '../../domain/entities/account_entity.dart';
@@ -18,7 +24,7 @@ class ApiAccountDataSource implements AccountDataSource {
 
       }));
 
-  static const String _authToken = '19|NO0RBzShYkdX8fVns3QgEWYXLseUP0wI2ko9UFjK27f982a4';
+  static const String _authToken = '25|4fXKhDxCzF5ikfKTp3EO3VBj2wNpQd6SJIQdaxkH3573d912';
 
   ApiAccountDataSource() {
     _dio.interceptors.add(InterceptorsWrapper(
@@ -304,6 +310,132 @@ class ApiAccountDataSource implements AccountDataSource {
         throw Exception(errorMessage);
       } else {
         throw Exception('Transfer failed: ${e.message}');
+      }
+    }
+  }
+
+
+  // lib/data/datasource/api_account_data_source.dart
+// Add these methods to the class:
+
+  @override
+  Future<List<TransactionEntity>> fetchTransactions({String? scope}) async {
+    try {
+      final Map<String, dynamic> queryParams = {};
+      if (scope != null) {
+        queryParams['scope'] = scope;
+      }
+
+      final response = await _dio.get(
+        '/transactions',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
+
+      if (response.data is Map && response.data.containsKey('items')) {
+        final items = List<Map<String, dynamic>>.from(response.data['items']);
+        return items.map((item) => TransactionModel.fromJson(item)).toList();
+      }
+
+      return [];
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Failed to fetch transactions: ${e.response!.data}');
+      } else {
+        throw Exception('Failed to fetch transactions: ${e.message}');
+      }
+    }
+  }
+
+  @override
+  Future<TransactionDetailEntity> fetchTransactionDetail(String transactionId, {String? scope}) async {
+    try {
+      final Map<String, dynamic> queryParams = {};
+      if (scope != null) {
+        queryParams['scope'] = scope;
+      }
+
+      final response = await _dio.get(
+        '/transactions/$transactionId',
+        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      );
+
+      return TransactionDetailModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw Exception('Transaction not found');
+      } else if (e.response != null) {
+        throw Exception('Failed to fetch transaction details: ${e.response!.data}');
+      } else {
+        throw Exception('Failed to fetch transaction details: ${e.message}');
+      }
+    }
+  }
+
+  @override
+// lib/data/datasource/api_account_data_source.dart
+  @override
+  Future<List<TransactionEntity>> fetchPendingApprovals() async {
+    try {
+      final response = await _dio.get('/transactions/pending-approvals');
+
+      print('Pending Approvals API Response: ${response.data}'); // للتصحيح
+
+      if (response.data is Map && response.data.containsKey('items')) {
+        final items = List<Map<String, dynamic>>.from(response.data['items']);
+
+        // التحقق من كل item قبل تحويله
+        final List<TransactionModel> transactions = [];
+
+        for (var item in items) {
+          try {
+            final transaction = TransactionModel.fromJson(item);
+            transactions.add(transaction);
+          } catch (e) {
+            print('Error parsing transaction item: $e');
+            print('Problematic item: $item');
+            // يمكنك تخطي هذا العنصر أو إضافة تسجيل خطأ
+          }
+        }
+
+        return transactions;
+      }
+
+      return [];
+    } on DioException catch (e) {
+      print('DioException in fetchPendingApprovals: $e');
+      print('Response: ${e.response?.data}');
+
+      if (e.response != null) {
+        throw Exception('Failed to fetch pending approvals: ${e.response!.data}');
+      } else {
+        throw Exception('Failed to fetch pending approvals: ${e.message}');
+      }
+    } catch (e) {
+      print('General error in fetchPendingApprovals: $e');
+      throw Exception('Failed to fetch pending approvals: $e');
+    }
+  }
+  @override
+  Future<Map<String, dynamic>> submitApprovalDecision(
+      String transactionId,
+      ApprovalDecisionData decision
+      ) async {
+    try {
+      final response = await _dio.post(
+        '/transactions/$transactionId/decision',
+        data: decision.toJson(),
+      );
+
+      return response.data;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw Exception('Transaction not found');
+      } else if (e.response?.statusCode == 400) {
+        throw Exception('Invalid decision data: ${e.response!.data}');
+      } else if (e.response != null) {
+        throw Exception('Failed to submit approval decision: ${e.response!.data}');
+      } else {
+        throw Exception('Failed to submit approval decision: ${e.message}');
       }
     }
   }

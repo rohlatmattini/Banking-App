@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/account_controller.dart';
+import '../controller/approval_controller.dart';
 import '../widgets/user_account_card.dart';
 import '../pages/onboard_customer_page.dart';
 
@@ -38,6 +39,20 @@ class AccountManagementPage extends StatelessWidget {
             onPressed: () => controller.fetchUsersWithAccounts(),
             tooltip: 'Refresh',
           ),
+          // In AccountManagementPage AppBar actions:
+          Obx(() {
+            final approvalController = Get.find<ApprovalController>();
+            return Badge(
+              label: Text(approvalController.pendingCount.toString()),
+              backgroundColor: Colors.red,
+              isLabelVisible: approvalController.pendingCount > 0,
+              child: IconButton(
+                icon: const Icon(Icons.gavel, color: Colors.white),
+                onPressed: () => Get.toNamed('/approvals'),
+                tooltip: 'Pending Approvals',
+              ),
+            );
+          }),
 
         ],
       ),
@@ -212,6 +227,7 @@ class _AccountManagementContentState extends State<_AccountManagementContent> {
       child: Column(
         children: [
           TextField(
+            cursorColor: Colors.teal,
             decoration: InputDecoration(
               hintText: 'Search by name, email, or phone...',
               prefixIcon: const Icon(Icons.search, color: Colors.teal),

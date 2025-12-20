@@ -425,6 +425,7 @@ class UserAccountCard extends StatelessWidget {
                   _showAccountDetails(account);
                 },
               ),
+
             ],
           ),
         ),

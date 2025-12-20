@@ -11,6 +11,12 @@ class HomePage extends StatelessWidget {
         title: const Text('Banking System', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.teal[700],
+        actions: [
+          IconButton(
+          icon: const Icon(Icons.history, color: Colors.white),
+          onPressed: () => Get.toNamed('/transactions'),
+          tooltip: 'View Transaction History',
+        ),],
       ),
       body: Center(
         child: Column(
@@ -62,6 +68,7 @@ class HomePage extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                   ),
+
                 ],
               ),
             ),
